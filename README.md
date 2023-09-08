@@ -46,8 +46,7 @@ Now you should be able to access the service:
 curl http://$(kubectl get svc api-gateway -o jsonpath='{.status.loadBalancer.ingress[].ip}'):9090
 ```
 
-
-You should get the response `Hello from frontend World`. Let's see that we allways receive the same response. (Use Ctrl-C to exit from the following command)
+You should get the response `Hello from frontend World`. 
 
 Let's deploy a Canary with Argo Rollouts [kubectl plugin](https://argo-rollouts.readthedocs.io/en/stable/features/kubectl-plugin/)
 
