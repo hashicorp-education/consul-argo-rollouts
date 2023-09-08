@@ -1,0 +1,18 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: frontend
+spec:
+  defaultSubset: "stable"
+  subsets:
+    stable:
+      filter: '"stable" in Service.Tags'
+    canary:
+      filter: '"canary" in Service.Tags'
+  loadBalancer:
+    policy: round_robin
+  # failover:
+  #   canary:
+  #     serviceSubset: stable
+
+

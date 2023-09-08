@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- front.yaml
+- consul/resolver.yaml
+- consul/splitter.yaml
+- consul/intentions.yaml
+- consul/gateway.yaml
+- consul/httproute.yaml
+# - stable-service.yaml
+# - canary-service.yaml
+- rollouts.yaml

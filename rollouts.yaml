@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: frontend-rollout
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dcanadillas-demo
+      tier: front
+  workloadRef: 
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReadySeconds: 30
+  revisionHistoryLimit: 3
+  strategy:
+    canary: 
+      canaryMetadata:
+        annotations:
+          consul.hashicorp.com/service-tags: canary
+          consul.hashicorp.com/connect-service: frontend
+        labels:
+          frontend-version: canary
+      stableMetadata:
+        annotations:
+          consul.hashicorp.com/service-tags: stable
+          consul.hashicorp.com/connect-service: frontend
+        labels:
+          frontend-version: stable
+      maxSurge: "25%"
+      maxUnavailable: 0
+      steps:
+      - setWeight: 50
+      - pause:
+          duration: 1h # 1 hour
+      # - setWeight: 40
+      - pause: {} # pause indefinitely
