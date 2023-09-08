@@ -4,8 +4,11 @@
 * Kubernetes cluster 
 * Helm or Consul K8s CLI (If you don't have Consul previously installed in K8s)
 
-> NOTE: We are using `LoadBalancer` service type for the API Gatewau, so bear in mind having your `LoadBalancer` services available (if you are using a local environment with Minikube you can use it by installing [](MetalLB) or using `minikube tunnel`)
-## Installing a test environment
+
+> NOTE: API Gateway config included is for **Consul 1.16+**. We are using `LoadBalancer` service type for the API Gateway, so bear in mind having your `LoadBalancer` services available (if you are using a local environment with Minikube you can use it by installing [](MetalLB) or using `minikube tunnel`)
+
+
+## Installing a test environment (optional)
 
 We are including in the repo a `consul.yaml` values file in case that you want to deploy your own local test environment like Minikube, MicroK8s or similar
 
