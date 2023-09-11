@@ -36,7 +36,7 @@ This example is deploying the following components to simulate a traffic managem
 * Consul API Gateway to ingress traffic to the mesh and route to the `frontend` example service
 
 
-You can use the included `kustomized.yaml` to install all required objects (from the repo directory):
+You can use the included `kustomization.yaml` to install all required objects (from the repo directory):
 
 ```
 kubectl apply -k ./
