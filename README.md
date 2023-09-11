@@ -5,7 +5,7 @@
 * Helm or Consul K8s CLI (If you don't have Consul previously installed in K8s)
 
 
-> NOTE: API Gateway config included is for **Consul 1.16+**. We are using `LoadBalancer` service type for the API Gateway, so bear in mind having your `LoadBalancer` services available (if you are using a local environment with Minikube you can use it by installing [](MetalLB) or using `minikube tunnel`)
+> NOTE: API Gateway config included is for **Consul 1.16+**. We are using `LoadBalancer` service type for the API Gateway, so bear in mind having your `LoadBalancer` services available (if you are using a local environment with Minikube you can use it by installing [MetalLB](https://metallb.universe.tf/installation/) or using `minikube tunnel`)
 
 
 ## Installing a test environment (optional)
@@ -15,10 +15,10 @@ We are including in the repo a `consul.yaml` values file in case that you want t
 * You can use `consul-k8s` or `helm`. If you use `consul-k8s`:
   ```
   kubectl create ns consul
-  kubectl create secret generic consul-bootstrap-token --from-literal token=ConsulR0cks
+  kubectl create secret generic consul-bootstrap-token --from-literal token=ConsulR0cks -n consul
   consul-k8s install -f consul/consul.yaml
   ```
-* Install Argo Rollouts. [https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation](Here are the steps)
+* Install Argo Rollouts. [Here are the steps](https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation)
 
 > NOTE: This `consul.yaml` is using an Enterprise version of Consul. So you would need to create a `consul-ent-license` secret with the license, or change the images for using Consul Community (previously OSS):
 > ```
