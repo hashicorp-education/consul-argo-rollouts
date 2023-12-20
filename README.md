@@ -1,42 +1,48 @@
-# Using Canary splitter with Consul and Argo Rollouts Progressive Delivery
+# Using Canary splitter with Consul and Argo Rollouts progressive delivery
+
+> [!NOTE]  
+> Forked from: https://github.com/dcanadillas/consul-argo-rollouts
 
 ## Requirements
 * Kubernetes cluster 
-* Helm or Consul K8s CLI (If you don't have Consul previously installed in K8s)
+* Helm or Consul K8s CLI (if you don't have Consul previously installed in K8s)
 
-
-> NOTE: API Gateway config included is for **Consul 1.16+**. We are using `LoadBalancer` service type for the API Gateway, so bear in mind having your `LoadBalancer` services available (if you are using a local environment with Minikube you can use it by installing [MetalLB](https://metallb.universe.tf/installation/) or using `minikube tunnel`)
+> [!NOTE]
+> This example uses an API Gateway configured for **Consul 1.16+**. In addition, the example uses the `LoadBalancer` service type for the API Gateway. Iif you are using a local environment with Minikube, use [MetalLB](https://metallb.universe.tf/installation/) or `minikube tunnel` to access the API Gateway.
 
 
 ## Installing a test environment (optional)
 
-We are including in the repo a `consul.yaml` values file in case that you want to deploy your own local test environment like Minikube, MicroK8s or similar
+This example includes a `consul.yaml` values file so you can deploy your own environment locally (for example, Minikube, MicroK8s, kind).
 
-* You can use `consul-k8s` or `helm`. If you use `consul-k8s`:
+* Install Consul using `consul-k8s` or `helm`. The following commands installs Consul with `consul-k8s` and sets a bootstrap token.
+
   ```
   kubectl create ns consul
   kubectl create secret generic consul-bootstrap-token --from-literal token=ConsulR0cks -n consul
   consul-k8s install -f consul/consul.yaml
   ```
-* Install Argo Rollouts. [Here are the steps](https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation)
 
-> NOTE: This `consul.yaml` is using an Enterprise version of Consul. So you would need to create a `consul-ent-license` secret with the license, or change the images for using Consul Community (previously OSS):
+> [!NOTE]
+> This `consul.yaml` uses Consul Enterprise. You need to create a `consul-ent-license` secret containing the license, or update `consul.yaml` to use Consul Community Edition (previously OSS):
 > ```
 > ...
 > image: hashicorp/consul:1.16.1
 > ...
 > ```
 
+* Install [Argo Rollouts](https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation).
+
 ## Deploying the app and config
 
-This example is deploying the following components to simulate a traffic management for Canary releases:
+This example deploys the following components to simulate a traffic management for Canary releases:
+
 * An Argo rollout to manage the progressive delivery for canary process
 * A [Consul resolver](https://developer.hashicorp.com/consul/docs/connect/config-entries/service-resolver) to differentiate service instances based on Consul service tags
 * A [Consul splitter](https://developer.hashicorp.com/consul/docs/connect/config-entries/service-splitter) that splits traffic between `stable` subset and `canary` subset based on a weight configuration
 * Consul API Gateway to ingress traffic to the mesh and route to the `frontend` example service
 
-
-You can use the included `kustomization.yaml` to install all required objects (from the repo directory):
+Install the required components using the `kustomization.yaml` file.
 
 ```
 kubectl apply -k ./
@@ -44,23 +50,29 @@ kubectl apply -k ./
 
 Check that you can see a `frontend` service in Consul with three instances (two of them should be tagged as `stable`)
 
-Now you should be able to access the service:
+Now you should be able to access the service.
+
 ```
 curl http://$(kubectl get svc api-gateway -o jsonpath='{.status.loadBalancer.ingress[].ip}'):9090
 ```
 
 You should get the response `Hello from frontend World`. 
 
-Let's deploy a Canary with Argo Rollouts [kubectl plugin](https://argo-rollouts.readthedocs.io/en/stable/features/kubectl-plugin/)
+Now, deploy a Canary with Argo Rollouts [kubectl plugin](https://argo-rollouts.readthedocs.io/en/stable/features/kubectl-plugin/).
 
 ```
 kubectl argo rollouts set image frontend-rollout frontend=hcdcanadillas/pydemo-front:v1.5
 ```
 
 Check that the rollout is executed from Argo:
-```
-$ kubectl argo rollouts get rollout frontend-rollout -w
 
+```
+kubectl argo rollouts get rollout frontend-rollout -w
+```
+
+This command will return something similar to the following:
+
+```
 Name:            frontend-rollout
 Namespace:       default
 Status:          ॥ Paused
@@ -88,9 +100,9 @@ NAME                                          KIND        STATUS     AGE    INFO
       └──□ frontend-rollout-59db886cbb-q5qs2  Pod         ✔ Running  27m    ready:2/2
 ```
 
-Once you see the `Canary` rollout heathy you can do a `Ctrl-C`. And you can see in the Consul UI (Services > frontend > Instances) that you have an instance tagged `stable` and another one  tagged `canary`
+Once you see the `Canary` rollout heathy, exit the command by entering `Ctrl-C`. In the Consul UI (Services > frontend > Instances), you should find an instance tagged `stable` and another one tagged `canary`.
 
-So now you can access the API Gateway and you can check that 75% of the traffic goes to `stable` and the other 25% to `canary`:
+Now you can access the API Gateway and you can check that 75% of the traffic goes to `stable` and the other 25% to `canary`.
 
 ```
 curl http://$(kubectl get svc api-gateway -o jsonpath='{.status.loadBalancer.ingress[].ip}'):9090;
@@ -100,6 +112,7 @@ done
 ```
 
 The output should be something like:
+
 ```
 Hello from frontend World
 
