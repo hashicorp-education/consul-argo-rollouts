@@ -23,13 +23,13 @@ This example includes a `consul.yaml` values file so you can deploy your own env
   consul-k8s install -f consul/consul.yaml
   ```
 
-  > [!NOTE]
-  > This `consul.yaml` uses Consul Enterprise. You need to create a `consul-ent-license` secret containing the license, or update `consul.yaml` to use Consul Community Edition (previously OSS):
-  > ```
-  > ...
-  > image: hashicorp/consul:1.16.1
-  > ...
-  > ```
+> [!NOTE]
+> This `consul.yaml` uses Consul Enterprise. You need to create a `consul-ent-license` secret containing the license, or update `consul.yaml` to use Consul Community Edition (previously OSS):
+> ```
+> ...
+> image: hashicorp/consul:1.16.1
+> ...
+> ```
 
 * Install [Argo Rollouts](https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation).
 
